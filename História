@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Primeira Guerra Mundial</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --correct-color: #27ae60;
+            --wrong-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+            background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1951&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: bold;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background-color: var(--light-color);
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .option.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+        
+        .option.wrong {
+            background-color: var(--wrong-color);
+            color: white;
+            border-color: var(--wrong-color);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        #next-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        #next-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        #submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        #submit-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+        }
+        
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .feedback {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        #restart-btn {
+            background-color: var(--correct-color);
+            color: white;
+            margin-top: 20px;
+        }
+        
+        #restart-btn:hover {
+            background-color: #219653;
+            transform: translateY(-3px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .easy {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .medium {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .hard {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 5px solid var(--primary-color);
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="container">
+            <header>
+                <h1>Primeira Guerra Mundial</h1>
+                <p class="subtitle">Teste seus conhecimentos sobre um dos conflitos mais marcantes da história</p>
+            </header>
+            
+            <div class="game-info">
+                <div class="score-container">Pontuação: <span id="score">0</span></div>
+                <div class="question-count">Pergunta <span id="current-question">1</span>/<span id="total-questions">10</span></div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="quiz-container">
+                <div class="question-container">
+                    <div class="question" id="question"></div>
+                    <div class="options" id="options"></div>
+                    <div class="explanation" id="explanation"></div>
+                </div>
+                
+                <div class="controls">
+                    <button id="submit-btn" disabled>Confirmar</button>
+                    <button id="next-btn" style="display: none;">Próxima</button>
+                </div>
+            </div>
+            
+            <div class="result-container" id="result-container">
+                <h2 class="result-title">Quiz Concluído!</h2>
+                <div class="score">Sua pontuação: <span id="final-score">0</span>/<span id="max-score">10</span></div>
+                <div class="feedback" id="feedback"></div>
+                <button id="restart-btn">Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banco de questões
+        const questions = [
+            {
+                question: "Qual foi o evento que serviu como estopim para o início da Primeira Guerra Mundial?",
+                options: [
+                    "Assassinato do arquiduque Francisco Ferdinando",
+                    "Invasão da Polônia pela Alemanha",
+                    "Afundamento do Lusitania",
+                    "Revolução Russa"
+                ],
+                answer: 0,
+                explanation: "O assassinato do arquiduque Francisco Ferdinando da Áustria-Hungria em 28 de junho de 1914 por Gavrilo Princip, um nacionalista sérvio, foi o catalisador que desencadeou uma série de eventos levando à guerra.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual desses países NÃO fazia parte da Tríplice Aliança no início da guerra?",
+                options: [
+                    "França",
+                    "Alemanha",
+                    "Áustria-Hungria",
+                    "Itália"
+                ],
+                answer: 0,
+                explanation: "A Tríplice Aliança era formada inicialmente por Alemanha, Áustria-Hungria e Itália (embora a Itália tenha mudado de lado em 1915). A França fazia parte da Tríplice Entente.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o principal objetivo do Plano Schlieffen, elaborado pela Alemanha?",
+                options: [
+                    "Derrotar rapidamente a França para depois focar na Rússia",
+                    "Estabelecer uma aliança com os Estados Unidos",
+                    "Criar uma linha defensiva nas colônias africanas",
+                    "Desenvolver novas armas químicas"
+                ],
+                answer: 0,
+                explanation: "O Plano Schlieffen previa uma rápida vitória sobre a França, invadindo através da Bélgica, para depois concentrar forças contra a Rússia, evitando assim uma guerra em duas frentes simultâneas.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi uma das principais características da fase conhecida como 'Guerra de Trincheiras'?",
+                options: [
+                    "Estagnação das linhas de frente com poucos avanços territoriais",
+                    "Uso massivo de cavalaria em batalhas abertas",
+                    "Rápidos movimentos de tropas motorizadas",
+                    "Domínio absoluto da aviação nos combates"
+                ],
+                answer: 0,
+                explanation: "A Guerra de Trincheiras (1915-1917) foi marcada por linhas estáticas de defesa que se estendiam por centenas de quilômetros, com pouquíssimos avanços territoriais apesar das enormes baixas humanas.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o principal fator que levou os Estados Unidos a entrarem na guerra em 1917?",
+                options: [
+                    "Afundamento de navios mercantes americanos por submarinos alemães",
+                    "Ataque direto à costa americana",
+                    "Aliança prévia com a França",
+                    "Interesses em territórios africanos"
+                ],
+                answer: 0,
+                explanation: "A política alemã de guerra submarina irrestrita, que resultou no afundamento de navios mercantes americanos como o Lusitania, foi o principal fator que levou os EUA a declararem guerra à Alemanha em abril de 1917.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destas batalhas é considerada uma das mais sangrentas e simbólicas da Primeira Guerra Mundial?",
+                options: [
+                    "Batalha de Verdun",
+                    "Batalha de Waterloo",
+                    "Batalha de Stalingrado",
+                    "Batalha de Midway"
+                ],
+                answer: 0,
+                explanation: "A Batalha de Verdun (1916) durou 10 meses e resultou em cerca de 700.000 baixas (mortos e feridos), tornando-se um símbolo da carnificina e do impasse da guerra de trincheiras.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual destes tratados encerrou oficialmente a participação da Rússia na Primeira Guerra Mundial?",
+                options: [
+                    "Tratado de Brest-Litovsk",
+                    "Tratado de Versalhes",
+                    "Tratado de Tordesilhas",
+                    "Tratado de Berlim"
+                ],
+                answer: 0,
+                explanation: "O Tratado de Brest-Litovsk (março de 1918) foi assinado entre as Potências Centrais e a Rússia bolchevique, retirando a Rússia da guerra após a Revolução de Outubro de 1917.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi uma das principais consequências do Tratado de Versalhes para a Alemanha?",
+                options: [
+                    "Perda de territórios e pesadas indenizações de guerra",
+                    "Divisão do país em zonas de ocupação permanente",
+                    "Proibição permanente de ter forças armadas",
+                    "Anulação completa de sua dívida externa"
+                ],
+                answer: 0,
+                explanation: "O Tratado de Versalhes (1919) impôs à Alemanha a perda de territórios, redução das forças armadas, aceitação de culpa pela guerra e o pagamento de pesadas reparações, criando um clima de humilhação nacional que contribuiu para o surgimento do nazismo.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destas inovações tecnológicas foi amplamente utilizada pela primeira vez na Primeira Guerra Mundial?",
+                options: [
+                    "Armas químicas",
+                    "Bombas atômicas",
+                    "Mísseis balísticos",
+                    "Radar"
+                ],
+                answer: 0,
+                explanation: "O uso de armas químicas como gás mostarda e cloro foi uma das características mais terríveis da Primeira Guerra Mundial, sendo utilizadas em larga escala pela primeira vez na história.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual foi o nome dado ao período de aparente paz, mas com intensa corrida armamentista que antecedeu a guerra?",
+                options: [
+                    "Paz Armada",
+                    "Guerra Fria",
+                    "Belle Époque",
+                    "Entreguerras"
+                ],
+                answer: 0,
+                explanation: "O período conhecido como 'Paz Armada' (do latim 'Si vis pacem, para bellum') foi marcado por tensões diplomáticas e intensa corrida armamentista entre as potências europeias nas décadas anteriores à guerra.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destes impérios deixou de existir após a Primeira Guerra Mundial?",
+                options: [
+                    "Império Austro-Húngaro",
+                    "Império Britânico",
+                    "Império Francês",
+                    "Império Japonês"
+                ],
+                answer: 0,
+                explanation: "O Império Austro-Húngaro foi dissolvido após a guerra, dando origem a vários estados-nação na Europa Central, como Áustria, Hungria, Tchecoslováquia e Iugoslávia.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual era o principal objetivo da Liga das Nações, criada após a guerra?",
+                options: [
+                    "Manter a paz internacional através da diplomacia",
+                    "Promover o comércio mundial",
+                    "Coordenação militar entre as potências vencedoras",
+                    "Administrar as colônias alemãs"
+                ],
+                answer: 0,
+                explanation: "A Liga das Nações foi criada pelo Tratado de Versalhes com o objetivo principal de prevenir futuras guerras através da diplomacia e da arbitragem de conflitos internacionais, embora tenha se mostrado ineficaz sem o apoio de grandes potências como os EUA.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destes fatores NÃO é considerado uma das causas profundas da Primeira Guerra Mundial?",
+                options: [
+                    "Crise econômica de 1929",
+                    "Nacionalismo exacerbado",
+                    "Sistema de alianças militares",
+                    "Corrida armamentista"
+                ],
+                answer: 0,
+                explanation: "A Crise de 1929 ocorreu mais de uma década após o fim da guerra e, portanto, não pode ser considerada uma de suas causas. Os outros três fatores são amplamente reconhecidos como causas estruturais do conflito.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o papel das mulheres durante a Primeira Guerra Mundial?",
+                options: [
+                    "Substituíram os homens em fábricas e serviços",
+                    "Participaram ativamente como combatentes",
+                    "Permaneceram exclusivamente no cuidado do lar",
+                    "Organizaram movimentos pacifistas internacionais"
+                ],
+                answer: 0,
+                explanation: "Com a ausência dos homens no front, as mulheres assumiram papéis tradicionalmente masculinos em fábricas, escritórios e serviços, o que contribuiu significativamente para a mudança em sua posição social e para a conquista de direitos como o voto feminino em vários países após a guerra.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual foi o nome dado à geração que lutou na Primeira Guerra Mundial?",
+                options: [
+                    "Geração Perdida",
+                    "Geração Silenciosa",
+                    "Geração Baby Boomer",
+                    "Geração X"
+                ],
+                answer: 0,
+                explanation: "O termo 'Geração Perdida' foi cunhado para descrever os jovens que lutaram na guerra, muitos dos quais morreram ou voltaram profundamente traumatizados pela experiência das trincheiras e pela escala sem precedentes da carnificina.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual destes países mudou de lado durante a guerra, abandonando a Tríplice Aliança?",
+                options: [
+                    "Itália",
+                    "França",
+                    "Rússia",
+                    "Reino Unido"
+                ],
+                answer: 0,
+                explanation: "A Itália, inicialmente parte da Tríplice Aliança com Alemanha e Áustria-Hungria, declarou neutralidade no início da guerra e depois se juntou à Tríplice Entente em 1915 após o Tratado de Londres, que prometia ganhos territoriais.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal motivo do fracasso do Plano Schlieffen?",
+                options: [
+                    "Resistência inesperada na Batalha do Marne",
+                    "Falta de equipamento adequado",
+                    "Deserção em massa de soldados alemães",
+                    "Intervenção imediata dos Estados Unidos"
+                ],
+                answer: 0,
+                explanation: "O Plano Schlieffen falhou principalmente devido à inesperada resistência francesa e britânica na Primeira Batalha do Marne (setembro de 1914), que impediu a rápida tomada de Paris e levou à estabilização da frente ocidental em trincheiras.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destas batalhas marcou a primeira utilização em larga escala de tanques de guerra?",
+                options: [
+                    "Batalha do Somme",
+                    "Batalha de Tannenberg",
+                    "Batalha de Gallipoli",
+                    "Batalha de Caporetto"
+                ],
+                answer: 0,
+                explanation: "Na Batalha do Somme (1916), os britânicos introduziram os primeiros tanques de guerra em combate, embora com eficácia limitada devido a problemas mecânicos e táticas ainda não aperfeiçoadas.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual era o nome do nacionalista sérvio que assassinou o arquiduque Francisco Ferdinando?",
+                options: [
+                    "Gavrilo Princip",
+                    "Vladimir Lenin",
+                    "Franz Joseph",
+                    "Kaiser Wilhelm"
+                ],
+                answer: 0,
+                explanation: "Gavrilo Princip, um jovem nacionalista sérvio membro do grupo Mão Negra, foi o autor dos tiros que mataram o arquiduque Francisco Ferdinando e sua esposa em Sarajevo em 28 de junho de 1914, evento que desencadeou a crise diplomática que levou à guerra.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destes territórios foi um dos principais pontos de tensão entre França e Alemanha antes da guerra?",
+                options: [
+                    "Alsácia-Lorena",
+                    "Bósnia-Herzegovina",
+                    "Dardanelos",
+                    "Sarajevo"
+                ],
+                answer: 0,
+                explanation: "A Alsácia-Lorena, região rica em minério de ferro, foi tomada pela Alemanha da França após a Guerra Franco-Prussiana (1870-71), criando um sentimento de revanchismo francês que foi uma das causas subjacentes da Primeira Guerra Mundial.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal motivo da Rússia se retirar da guerra em 1917?",
+                options: [
+                    "Eclosão da Revolução Russa",
+                    "Derrota militar esmagadora",
+                    "Acordo secreto com a Alemanha",
+                    "Falta de recursos naturais"
+                ],
+                answer: 0,
+                explanation: "A Revolução Russa de 1917, que derrubou o regime czarista e levou os bolcheviques ao poder, resultou na retirada da Rússia da guerra, pois o novo governo comunista priorizou resolver os problemas internos do país.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destes acontecimentos ocorreu durante a guerra e mostrou um momento de humanidade entre inimigos?",
+                options: [
+                    "Trégua de Natal de 1914",
+                    "Assinatura do Tratado de Versalhes",
+                    "Revolução de Outubro",
+                    "Batalha de Verdun"
+                ],
+                answer: 0,
+                explanation: "Durante a Trégua de Natal de 1914, soldados alemães e britânicos suspenderam espontaneamente os combates na véspera de Natal, trocaram presentes, cantaram canções natalinas e até jogaram futebol juntos, em um raro momento de fraternidade em meio ao conflito.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual era o nome do plano de guerra alemão que previa a rápida derrota da França?",
+                options: [
+                    "Plano Schlieffen",
+                    "Plano Marshall",
+                    "Plano Molotov",
+                    "Plano Barbarossa"
+                ],
+                answer: 0,
+                explanation: "O Plano Schlieffen, desenvolvido pelo general alemão Alfred von Schlieffen, previa uma rápida vitória sobre a França através da invasão pela Bélgica (neutralizando assim as fortificações francesas na fronteira), para depois concentrar forças contra a Rússia.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destas novas nações surgiu após o fim da Primeira Guerra Mundial?",
+                options: [
+                    "Tchecoslováquia",
+                    "Ucrânia",
+                    "Bielorrússia",
+                    "Finlândia"
+                ],
+                answer: 0,
+                explanation: "A Tchecoslováquia foi uma das novas nações que surgiram após o colapso do Império Austro-Húngaro, proclamando sua independência em outubro de 1918. As outras opções já existiam de alguma forma antes da guerra ou emergiram de outros contextos.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal instrumento de guerra naval utilizado pela Alemanha contra navios mercantes?",
+                options: [
+                    "Submarinos (U-boats)",
+                    "Couraçados",
+                    "Destroyers",
+                    "Navios de assalto anfíbio"
+                ],
+                answer: 0,
+                explanation: "A Alemanha utilizou extensivamente seus submarinos (U-boats) para atacar navios mercantes que abasteciam os Aliados, em uma campanha de guerra submarina irrestrita que foi um dos fatores que levaram os EUA a entrarem na guerra.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destes líderes políticos NÃO estava no poder de seu país durante a Primeira Guerra Mundial?",
+                options: [
+                    "Winston Churchill",
+                    "Kaiser Wilhelm II",
+                    "Woodrow Wilson",
+                    "Georges Clemenceau"
+                ],
+                answer: 0,
+                explanation: "Winston Churchill, embora fosse Primeiro Lorde do Almirantado no início da guerra, não era primeiro-ministro do Reino Unido durante a Primeira Guerra Mundial (ele assumiria esse cargo apenas na Segunda Guerra Mundial). Os outros três eram líderes de seus respectivos países durante o conflito.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal impacto da Primeira Guerra Mundial sobre o Império Otomano?",
+                options: [
+                    "Sua dissolução e divisão em vários países",
+                    "Seu fortalecimento como potência regional",
+                    "Sua expansão territorial nos Bálcãs",
+                    "Sua aliança permanente com a Rússia"
+                ],
+                answer: 0,
+                explanation: "A derrota do Império Otomano na guerra levou à sua dissolução e à divisão de seus territórios no Oriente Médio entre as potências vencedoras, sob o sistema de mandatos da Liga das Nações, dando origem a vários países modernos como Iraque, Síria, Líbano e outros.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destas batalhas foi uma importante vitória naval dos Aliados?",
+                options: [
+                    "Batalha da Jutlândia",
+                    "Batalha de Tsushima",
+                    "Batalha do Atlântico",
+                    "Batalha de Midway"
+                ],
+                answer: 0,
+                explanation: "A Batalha da Jutlândia (1916) foi o maior confronto naval da guerra entre a frota britânica e a alemã. Embora taticamente inconclusiva, estrategicamente manteve o bloqueio naval britânico que estrangulou economicamente a Alemanha.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal efeito da guerra sobre a economia mundial?",
+                options: [
+                    "Endividamento generalizado e desorganização econômica",
+                    "Expansão ilimitada do comércio global",
+                    "Estabilidade monetária prolongada",
+                    "Dominância absoluta da economia alemã"
+                ],
+                answer: 0,
+                explanation: "A guerra causou enorme desorganização econômica, com países endividados (especialmente os europeus com os EUA), inflação, destruição de infraestrutura e mudanças nos padrões comerciais, preparando o cenário para a instabilidade econômica do período entreguerras.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destes territórios foi devolvido à França pelo Tratado de Versalhes?",
+                options: [
+                    "Alsácia-Lorena",
+                    "Sarrebruck",
+                    "Dantzig",
+                    "Sudetos"
+                ],
+                answer: 0,
+                explanation: "A Alsácia-Lorena, região disputada entre França e Alemanha desde a Guerra Franco-Prussiana (1870-71), foi devolvida à França pelo Tratado de Versalhes, cumprindo uma das principais demandas francesas.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o principal objetivo da Conferência de Paz de Paris em 1919?",
+                options: [
+                    "Estabelecer os termos de paz após a guerra",
+                    "Planejar operações militares conjuntas",
+                    "Criar uma aliança contra a Rússia bolchevique",
+                    "Distribuir colônias africanas"
+                ],
+                answer: 0,
+                explanation: "A Conferência de Paz de Paris (1919) reuniu os países vencedores para estabelecer os termos de paz com as nações derrotadas, resultando em vários tratados, sendo o mais importante o Tratado de Versalhes com a Alemanha.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual destes países foi criado a partir do desmembramento do Império Austro-Húngaro?",
+                options: [
+                    "Iugoslávia",
+                    "Bulgária",
+                    "Romênia",
+                    "Grécia"
+                ],
+                answer: 0,
+                explanation: "O Reino dos Sérvios, Croatas e Eslovenos (mais tarde renomeado Iugoslávia) foi criado a partir de territórios do Império Austro-Húngaro e do Reino da Sérvia, reunindo diversos povos eslavos do sul sob um único estado.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal motivo da Itália ter mudado de lado durante a guerra?",
+                options: [
+                    "Promessas de ganhos territoriais pelos Aliados",
+                    "Invasão alemã do norte da Itália",
+                    "Pressão popular pacifista",
+                    "Ameaça de bombardeio naval"
+                ],
+                answer: 0,
+                explanation: "A Itália, inicialmente neutra apesar de ser parte da Tríplice Aliança, negociou secretamente com os Aliados através do Tratado de Londres (1915), que prometeu significativos ganhos territoriais em troca de sua entrada na guerra ao lado da Entente.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destas frentes de batalha ficou conhecida como a 'Guerra Esquecida'?",
+                options: [
+                    "Frente Oriental",
+                    "Frente Ocidental",
+                    "Frente Italiana",
+                    "Frente dos Balcãs"
+                ],
+                answer: 0,
+                explanation: "A Frente Oriental, onde a Rússia enfrentou a Alemanha e a Áustria-Hungria, é muitas vezes chamada de 'Guerra Esquecida' porque recebe menos atenção do que a Frente Ocidental, apesar de ter sido igualmente importante e sangrenta.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal efeito da guerra sobre o papel das mulheres nas sociedades ocidentais?",
+                options: [
+                    "Aceleração das reivindicações por direitos iguais",
+                    "Retorno aos papéis tradicionais imediatamente após a guerra",
+                    "Proibição do trabalho feminino em fábricas",
+                    "Criação de unidades militares femininas"
+                ],
+                answer: 0,
+                explanation: "A participação ativa das mulheres na força de trabalho durante a guerra, substituindo os homens que estavam no front, acelerou significativamente os movimentos pela igualdade de direitos, incluindo o sufrágio feminino que foi conquistado em vários países logo após o conflito.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destas batalhas marcou a primeira grande ofensiva alemã na Frente Ocidental em 1918?",
+                options: [
+                    "Ofensiva da Primavera",
+                    "Batalha de Cambrai",
+                    "Batalha de Passchendaele",
+                    "Batalha de Arras"
+                ],
+                answer: 0,
+                explanation: "A Ofensiva da Primavera (ou Kaiserschlacht) em 1918 foi uma série de ataques alemães na Frente Ocidental, aproveitando a saída da Rússia da guerra para transferir tropas para o oeste, antes que os reforços americanos se tornassem decisivos.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal motivo da entrada da Turquia na guerra ao lado das Potências Centrais?",
+                options: [
+                    "Aliança com a Alemanha e ataques russos",
+                    "Invasão britânica direta de Istambul",
+                    "Ameaça de bombardeio naval italiano",
+                    "Promessas territoriais francesas"
+                ],
+                answer: 0,
+                explanation: "O Império Otomano (Turquia) tinha laços militares com a Alemanha e entrou na guerra após ataques russos a seus portos no Mar Negro, formalizando sua aliança com as Potências Centrais em outubro de 1914.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destas inovações médicas foi impulsionada pela Primeira Guerra Mundial?",
+                options: [
+                    "Transfusões de sangue",
+                    "Antibióticos",
+                    "Raio-X",
+                    "Vacinação em massa"
+                ],
+                answer: 0,
+                explanation: "As transfusões de sangue foram significativamente desenvolvidas durante a guerra para tratar os feridos, com avanços na armazenagem e transfusão indireta. Os antibióticos só seriam descobertos mais tarde, embora algumas técnicas antissépticas tenham sido aprimoradas.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal objetivo da Declaração Balfour de 1917?",
+                options: [
+                    "Apoio britânico à criação de um lar nacional judeu na Palestina",
+                    "Anúncio da entrada dos EUA na guerra",
+                    "Proposta de paz separada com a Áustria-Hungria",
+                    "Plano de divisão do Império Otomano"
+                ],
+                answer: 0,
+                explanation: "A Declaração Balfour, emitida pelo governo britânico em 1917, expressava apoio à criação de um 'lar nacional para o povo judeu' na Palestina, então parte do Império Otomano, tendo consequências significativas para o Oriente Médio no pós-guerra.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destes países foi o primeiro a declarar guerra durante o conflito?",
+                options: [
+                    "Áustria-Hungria",
+                    "Alemanha",
+                    "Rússia",
+                    "Sérvia"
+                ],
+                answer: 0,
+                explanation: "A Áustria-Hungria foi o primeiro país a declarar guerra, contra a Sérvia em 28 de julho de 1914, após o ultimato relacionado ao assassinato do arquiduque Francisco Ferdinando não ter sido totalmente aceito.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o principal efeito da guerra sobre o sistema colonial europeu?",
+                options: [
+                    "Enfraquecimento do prestígio colonial europeu",
+                    "Expansão imediata dos impérios coloniais",
+                    "Transferência de todas as colônias para os EUA",
+                    "Criação de um sistema colonial unificado"
+                ],
+                answer: 0,
+                explanation: "A participação de soldados coloniais na guerra e a visão da vulnerabilidade das potências europeias enfraqueceram o prestígio do colonialismo, alimentando movimentos de independência que cresceriam no período entreguerras e após a Segunda Guerra Mundial.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destes territórios foi colocado sob administração da Liga das Nações após a guerra?",
+                options: [
+                    "Dantzig",
+                    "Alsácia-Lorena",
+                    "Sudetos",
+                    "Tirol"
+                ],
+                answer: 0,
+                explanation: "A Cidade Livre de Dantzig (atual Gdańsk, Polônia) foi estabelecida pelo Tratado de Versalhes como uma cidade-estado sob proteção da Liga das Nações, para garantir o acesso da Polônia ao mar, enquanto permanecia com uma população majoritariamente alemã.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual foi o principal motivo da Batalha de Gallipoli?",
+                options: [
+                    "Abrir um caminho marítimo para ajudar a Rússia",
+                    "Conquistar territórios africanos",
+                    "Proteger colônias britânicas na Ásia",
+                    "Estabelecer uma base contra a Itália"
+                ],
+                answer: 0,
+                explanation: "A Campanha de Gallipoli (1915-16) foi uma tentativa dos Aliados de forçar os Dardanelos e tomar Constantinopla, para abrir uma rota de suprimentos para a Rússia e derrotar o Império Otomano, mas terminou em fracasso com pesadas baixas.",
+                difficulty: "hard"
+            },
+            {
+                question: "Qual destes conceitos políticos ganhou força após a Primeira Guerra Mundial?",
+                options: [
+                    "Autodeterminação dos povos",
+                    "Monarquia absoluta",
+                    "Colonialismo expansionista",
+                    "Isolacionismo europeu"
+                ],
+                answer: 0,
+                explanation: "O princípio de autodeterminação dos povos, defendido pelo presidente americano Woodrow Wilson em seus 14 Pontos, ganhou força após a guerra, levando à criação de novos estados-nação a partir dos impérios derrotados, especialmente na Europa Central e nos Bálcãs.",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual foi o principal impacto da guerra sobre a arte e a literatura?",
+                options: [
+                    "Surgimento de obras que expressavam desilusão e trauma",
+                    "Popularização de temas exclusivamente patrióticos",
+                    "Retorno aos estilos clássicos tradicionais",
+                    "Proibição de temas relacionados à guerra"
+                ],
+                answer: 0,
+                explanation: "A experiência traumática da guerra gerou um movimento artístico e literário que expressava desilusão, absurdo e crítica social, como visto no Dadaísmo, no Expressionismo e em obras de autores como Erich Maria Remarque ('Nada de Novo no Front').",
+                difficulty: "medium"
+            },
+            {
+                question: "Qual destas epidemias foi agravada pelas condições da guerra?",
+                options: [
+                    "Gripe Espanhola",
+                    "Peste Bubônica",
+                    "Varíola",
+                    "Cólera"
+                ],
+                answer: 0,
+                explanation: "A pandemia de Gripe Espanhola (1918-20), que matou mais pessoas que a própria guerra, foi amplamente disseminada e agravada pelo movimento de tropas, condições de superlotação nos acampamentos e hospitais, e sistemas de saúde sobrecarregados.",
+                difficulty: "easy"
+            },
+            {
+                question: "Qual foi o principal efeito da guerra sobre a economia dos Estados Unidos?",
+                options: [
+                    "Tornou-se a maior potência credora do mundo",
+                    "Entrou em depressão econômica imediatamente",
+                    "Perdeu mercados internacionais importantes",
+                    "Tornou-se dependente de importações europeias"
+                ],
+                answer: 0,
+                explanation: "A guerra transformou os EUA de devedor em credor internacional, pois financiaram os esforços de guerra dos Aliados e emergiram como a maior potência econômica mundial, enquanto as economias europeias estavam devastadas pelo conflito.",
+                difficulty: "medium"
+            }
+        ];
+
+        // Variáveis do jogo
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let questionsAnswered = 0;
+        const totalQuestions = 10; // Número de perguntas por jogo
+        let shuffledQuestions = [];
+        
+        // Elementos do DOM
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const scoreElement = document.getElementById('score');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result-container');
+        const finalScoreElement = document.getElementById('final-score');
+        const maxScoreElement = document.getElementById('max-score');
+        const feedbackElement = document.getElementById('feedback');
+        const restartButton = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const explanationElement = document.getElementById('explanation');
+        const quizContainer = document.querySelector('.quiz-container');
+        
+        // Inicializar o jogo
+        function initGame() {
+            score = 0;
+            questionsAnswered = 0;
+            selectedOption = null;
+            
+            // Embaralhar as perguntas e pegar as primeiras 'totalQuestions'
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5).slice(0, totalQuestions);
+            
+            // Atualizar a interface
+            scoreElement.textContent = score;
+            totalQuestionsElement.textContent = totalQuestions;
+            
+            // Esconder o resultado e mostrar o quiz
+            resultContainer.style.display = 'none';
+            quizContainer.style.display = 'block';
+            
+            // Carregar a primeira pergunta
+            loadQuestion();
+        }
+        
+        // Carregar pergunta
+        function loadQuestion() {
+            resetState();
+            currentQuestionElement.textContent = questionsAnswered + 1;
+            progressBar.style.width = `${(questionsAnswered / totalQuestions) * 100}%`;
+            
+            const currentQuestion = shuffledQuestions[questionsAnswered];
+            const difficultyClass = currentQuestion.difficulty;
+            
+            questionElement.innerHTML = `${currentQuestion.question} <span class="difficulty ${difficultyClass}">${currentQuestion.difficulty}</span>`;
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.classList.add('option');
+                button.textContent = option;
+                button.dataset.index = index;
+                button.addEventListener('click', selectOption);
+                optionsElement.appendChild(button);
+            });
+            
+            submitButton.disabled = true;
+            nextButton.style.display = 'none';
+            explanationElement.style.display = 'none';
+        }
+        
+        // Resetar estado das opções
+        function resetState() {
+            while (optionsElement.firstChild) {
+                optionsElement.removeChild(optionsElement.firstChild);
+            }
+            
+            selectedOption = null;
+            submitButton.disabled = true;
+        }
+        
+        // Selecionar opção
+        function selectOption(e) {
+            const selectedButton = e.target;
+            
+            // Remover seleção anterior
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Selecionar nova opção
+            selectedButton.classList.add('selected');
+            selectedOption = parseInt(selectedButton.dataset.index);
+            submitButton.disabled = false;
+        }
+        
+        // Verificar resposta
+        function checkAnswer() {
+            const currentQuestion = shuffledQuestions[questionsAnswered];
+            
+            // Desabilitar todas as opções
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mostrar qual era a correta e qual foi selecionada
+            options.forEach((option, index) => {
+                if (index === currentQuestion.answer) {
+                    option.classList.add('correct');
+                } else if (index === selectedOption && selectedOption !== currentQuestion.answer) {
+                    option.classList.add('wrong');
+                }
+            });
+            
+            // Atualizar pontuação
+            if (selectedOption === currentQuestion.answer) {
+                score++;
+                scoreElement.textContent = score;
+            }
+            
+            // Mostrar explicação
+            explanationElement.textContent = currentQuestion.explanation;
+            explanationElement.style.display = 'block';
+            
+            // Mostrar botão de próxima pergunta
+            submitButton.style.display = 'none';
+            nextButton.style.display = 'inline-block';
+        }
+        
+        // Próxima pergunta
+        function nextQuestion() {
+            questionsAnswered++;
+            
+            if (questionsAnswered < totalQuestions) {
+                loadQuestion();
+                submitButton.style.display = 'inline-block';
+            } else {
+                showResult();
+            }
+        }
+        
+        // Mostrar resultado final
+        function showResult() {
+            quizContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+            progressBar.style.width = '100%';
+            
+            finalScoreElement.textContent = score;
+            maxScoreElement.textContent = totalQuestions;
+            
+            // Dar feedback baseado na pontuação
+            const percentage = (score / totalQuestions) * 100;
+            
+            if (percentage >= 80) {
+                feedbackElement.textContent = "Excelente! Você demonstrou um conhecimento excepcional sobre a Primeira Guerra Mundial.";
+            } else if (percentage >= 60) {
+                feedbackElement.textContent = "Bom trabalho! Você tem um bom entendimento sobre a Primeira Guerra Mundial, mas ainda pode aprender mais.";
+            } else if (percentage >= 40) {
+                feedbackElement.textContent = "Não foi mal! Você conhece alguns aspectos da Primeira Guerra Mundial, mas há muito mais para explorar.";
+            } else {
+                feedbackElement.textContent = "Continue estudando! A Primeira Guerra Mundial é um tema complexo e fascinante que vale a pena conhecer melhor.";
+            }
+        }
+        
+        // Event listeners
+        submitButton.addEventListener('click', checkAnswer);
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', initGame);
+        
+        // Iniciar o jogo quando a página carregar
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
